@@ -197,8 +197,13 @@ class CIFARDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
         elif torch is not None:
-            # Convert to float tensor in CHW format if no transform is provided
             image = torch.tensor(image, dtype=torch.float32).permute(2, 0, 1) / 255.0
+
+            # Normalize
+            mean = torch.tensor([0.4914, 0.4822, 0.4465]).view(3, 1, 1)
+            std = torch.tensor([0.2023, 0.1994, 0.2010]).view(3, 1, 1)
+
+            image = (image - mean) / std
 
         return image, label
 
